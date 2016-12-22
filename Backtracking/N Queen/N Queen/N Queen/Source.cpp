@@ -6,40 +6,19 @@
 
 using namespace std;
 
-int get_row(vector<string>& matrix, int col, int N)
+bool is_safe(vector<string>& matrix, int N, vector<int>& rows)
 {
-	for (int i = 0; i < N; i++)
-	{
-		if (matrix[i][col] == 'Q')
-			return i;
-	}
-
-	return -1;
-}
-
-bool is_safe(vector<string>& matrix, int N)
-{
-	vector<int> positions;
-
-	for (int i = 0; i < N; i++)
-	{
-		int row = get_row(matrix, i, N);
-
-		if (row >= 0)
-			positions.push_back(row);
-	}
-
-	if (positions.size() <= 1)
+	if (rows.size() == 1)
 		return true;
 
-	for (int i = 1; i < positions.size(); i++)
+	for (int i = 1; i < rows.size(); i++)
 	{
 		for (int j = 0; j < i; j++)
 		{
-			if (positions[i] == positions[j])
+			if (rows[i] == rows[j])
 				return false;
 
-			if (positions[i] + (j - i) == positions[j] || positions[i] + (i - j) == positions[j])
+			if (rows[i] + (j - i) == rows[j] || rows[i] + (i - j) == rows[j])
 				return false;
 		}
 	}
@@ -48,7 +27,7 @@ bool is_safe(vector<string>& matrix, int N)
 }
 
 
-void NQueen(vector<string>& matrix, int column, int N, vector<vector<string>>& solutions)
+void NQueen(vector<string>& matrix, int column, int N, vector<vector<string>>& solutions, vector<int>& rows)
 {
 	if (N < 4 && N > 1)
 		return;
@@ -65,11 +44,13 @@ void NQueen(vector<string>& matrix, int column, int N, vector<vector<string>>& s
 	for (int i = 0; i < N; i++)
 	{
 		matrix[i][column] = 'Q';
+		rows.push_back(i);
 
-		if(is_safe(matrix, N))
-			NQueen(matrix, column + 1, N, solutions);
+		if(is_safe(matrix, N, rows))
+			NQueen(matrix, column + 1, N, solutions, rows);
 
 		matrix[i][column] = '.';
+		rows.pop_back();
 	}
 }
 
@@ -95,7 +76,8 @@ int main()
 		matrix.push_back(s);
 	}
 
-	NQueen(matrix, 0, N, solutions);
+	vector<int> rows;
+	NQueen(matrix, 0, N, solutions, rows);
 
 	printf("Here are all the solutions:\n\n");
 
