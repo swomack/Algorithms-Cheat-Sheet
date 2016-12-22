@@ -50,7 +50,7 @@ bool is_safe(vector<string>& matrix, int N)
 
 void NQueen(vector<string>& matrix, int column, int N, vector<vector<string>>& solutions)
 {
-	if (N < 4)
+	if (N < 4 && N > 1)
 		return;
 
 	if (column > N)
